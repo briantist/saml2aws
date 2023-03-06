@@ -13,7 +13,15 @@ on:
 jobs:
   release:
     name: release
-    runs-on: macos-latest
+    strategy:
+      # the goreleaser and the Github release API doesn't handle concurrent
+      # access well, so run goreleaser serially
+      max-parallel: 1
+      matrix:
+        os:
+        - ubuntu-latest
+        - macos-latest
+    runs-on: ${{ matrix.os }}
     if: github.event_name != 'workflow_dispatch'
     steps:
 
